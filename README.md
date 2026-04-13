@@ -38,7 +38,7 @@ Both approaches use the same toolkit:
 ### 1. Install the forge plugin
 
 ```bash
-git clone https://github.com/McFuzzySquirrel/mcfuzzy-agent-forge.git
+git clone https://github.com/lithiumriver/mcfuzzy-agent-forge-claude.git
 ```
 
 Then install in Claude Code:
@@ -152,4 +152,10 @@ This plugin is designed for Claude Code. For GitHub Copilot, use the original [v
 
 **How many agents does it generate?**
 3–4 agents for small projects, 8–12 for larger ones. The forge scales the team to your PRD's complexity.
+
+---
+
+## Credits
+
+This project is a Claude Code port of [McFuzzy Agent Forge](https://github.com/McFuzzySquirrel/mcfuzzy-agent-forge) by [@McFuzzySquirrel](https://github.com/McFuzzySquirrel). The original work — the PRD interview process, agent team generation methodology, decomposition workflow, and orchestration patterns — is entirely theirs. This repo adapts that foundation for the Claude Code plugin ecosystem.
 
