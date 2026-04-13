@@ -63,29 +63,62 @@ copy_file() {
   echo "  Copied:  $dest"
 }
 
-# ---------------------------------------------------------------------------
-# Bootstrap
-# ---------------------------------------------------------------------------
-echo ""
-echo "Target: $TARGET_DIR"
+# ---- Bootstrap ---------------------------------------------------------------
+
+PLUGIN_DIR="$TARGET_DIR/.claude/plugins/agent-forge"
+AGENTS_DIR="$PLUGIN_DIR/agents"
+SKILLS_DIR="$PLUGIN_DIR/skills"
+
+echo "Bootstrapping Agent Forge into: $TARGET_DIR"
 echo ""
 
-echo "Agents:"
-for agent in "$TEMPLATES_DIR/agents/"*.md; do
-  [[ -f "$agent" ]] || continue
-  copy_file "$agent" "$TARGET_DIR/.github/agents/$(basename "$agent")"
-done
+# Create directory structure
+mkdir -p "$AGENTS_DIR" "$SKILLS_DIR"
+
+# Copy project-orchestrator agent
+copy_file "$TEMPLATES_DIR/agents/project-orchestrator.md" "$AGENTS_DIR/project-orchestrator.md"
+
+# Render plugin.json
+PROJECT_NAME="$(basename "$TARGET_DIR")"
+if command -v node &>/dev/null && node -e "require('ejs')" 2>/dev/null; then
+  node -e "
+    const ejs = require('ejs');
+    const fs = require('fs');
+    const tmpl = fs.readFileSync('$TEMPLATES_DIR/plugin.json.ejs', 'utf8');
+    fs.writeFileSync('$PLUGIN_DIR/plugin.json', ejs.render(tmpl, { projectName: '$PROJECT_NAME' }));
+  "
+  echo "  Rendered plugin.json"
+else
+  cat > "$PLUGIN_DIR/plugin.json" <<PLUGINJSON
+{
+  "name": "agent-forge",
+  "version": "1.0.0",
+  "description": "Custom Claude Code agent team for $PROJECT_NAME",
+  "agents": ["agents/project-orchestrator.md"],
+  "skills": []
+}
+PLUGINJSON
+  echo "  Wrote plugin.json (static fallback)"
+fi
+
+# Render CLAUDE.md
+CLAUDE_MD="$TARGET_DIR/CLAUDE.md"
+if command -v node &>/dev/null && node -e "require('ejs')" 2>/dev/null; then
+  node -e "
+    const ejs = require('ejs');
+    const fs = require('fs');
+    const tmpl = fs.readFileSync('$TEMPLATES_DIR/CLAUDE.md.ejs', 'utf8');
+    const out = ejs.render(tmpl, { projectName: '$PROJECT_NAME' });
+    fs.writeFileSync('$CLAUDE_MD', out);
+  "
+  echo "  Rendered CLAUDE.md"
+else
+  sed "s/<%= projectName %>/$PROJECT_NAME/g" "$TEMPLATES_DIR/CLAUDE.md.ejs" > "$CLAUDE_MD"
+  echo "  Wrote CLAUDE.md (static fallback)"
+fi
 
 echo ""
-echo "Skills:"
-for skill_dir in "$TEMPLATES_DIR/skills/"*/; do
-  [[ -d "$skill_dir" ]] || continue
-  skill_name="$(basename "$skill_dir")"
-  src="$skill_dir/SKILL.md"
-  [[ -f "$src" ]] || continue
-  copy_file "$src" "$TARGET_DIR/.github/skills/$skill_name/SKILL.md"
-done
-
-echo ""
-echo "Bootstrap complete."
-echo "Commit .github/agents/ and .github/skills/ to your repository to activate the agents."
+echo "Done! Next steps:"
+echo "  1. Open $TARGET_DIR in Claude Code"
+echo "  2. Run /forge-build-prd to create your PRD"
+echo "  3. Run /forge-build-agent-team to generate your agent team"
