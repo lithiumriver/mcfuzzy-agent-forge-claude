@@ -9,8 +9,9 @@
 #   --force      Overwrite existing files without prompting
 #
 # What it does:
-#   Copies templates/agents/*.md   → TARGET_DIR/.github/agents/
-#   Copies templates/skills/*/SKILL.md → TARGET_DIR/.github/skills/{name}/SKILL.md
+#   Copies templates/agents/project-orchestrator.md → TARGET_DIR/.claude/plugins/agent-forge/agents/
+#   Renders templates/plugin.json.ejs  → TARGET_DIR/.claude/plugins/agent-forge/plugin.json
+#   Renders templates/CLAUDE.md.ejs    → TARGET_DIR/CLAUDE.md
 
 set -euo pipefail
 

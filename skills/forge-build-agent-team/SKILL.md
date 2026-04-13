@@ -8,7 +8,7 @@ description: >
 
 # Skill: Build a Custom Agent Team from a PRD
 
-You are building a team of Claude Code agents and reusable skills from a Product Requirements Document (PRD), a Product Vision with Feature documents, or a technical specification. The goal is to produce a set of specialist `.md` files that can be committed to a repository so Copilot can act as each team member.
+You are building a team of Claude Code agents and reusable skills from a Product Requirements Document (PRD), a Product Vision with Feature documents, or a technical specification. The goal is to produce a set of specialist `.md` files that can be committed to a repository so Claude can act as each team member.
 
 ---
 
@@ -224,7 +224,7 @@ Create each skill file at `.claude/plugins/agent-forge/skills/{skill-name}/SKILL
 ---
 name: {skill-name}
 description: >
-  {One-sentence summary of what this skill does and when Copilot should use it.}
+  {One-sentence summary of what this skill does and when to use this skill.}
 ---
 
 # Skill: {Human-Readable Title}
