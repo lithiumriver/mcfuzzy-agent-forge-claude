@@ -1,0 +1,15 @@
+{
+  "name": "mcfuzzy-agent-forge",
+  "version": "2.0.0",
+  "description": "Bootstrap a custom Claude Code agent team from your PRD — in minutes.",
+  "skills": [
+    "skills/forge-build-prd",
+    "skills/forge-decompose-prd",
+    "skills/forge-build-feature-prd",
+    "skills/forge-build-agent-team"
+  ],
+  "agents": [
+    "agents/forge-team-builder.md",
+    "agents/project-orchestrator.md"
+  ]
+}
