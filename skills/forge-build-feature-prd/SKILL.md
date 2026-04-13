@@ -27,7 +27,7 @@ Before starting, determine which mode to operate in:
 
 **Post-project mode** (existing behavior):
 - A completed or in-progress project exists with a PRD (`docs/PRD.md`)
-- Agent files exist in `.github/agents/` beyond forge templates
+- Agent files exist in `.claude/plugins/agent-forge/agents/` beyond forge templates
 - The codebase has implemented code from prior phases
 - Proceed with **Step 1a** below
 
@@ -39,7 +39,7 @@ Before starting, determine which mode to operate in:
 
 **Detection heuristics:**
 1. If `docs/product-vision.md` exists and no specialist agents exist → **Greenfield mode**
-2. If `.github/agents/` contains specialist agents (not just forge templates) → **Post-project mode**
+2. If `.claude/plugins/agent-forge/agents/` contains specialist agents (not just forge templates) → **Post-project mode**
 3. If the user explicitly says "this is a new project" or "initial decomposition" → **Greenfield mode**
 4. If the user explicitly says "add to existing project" → **Post-project mode**
 5. When in doubt, ask the user
@@ -59,7 +59,7 @@ Before discussing the new feature, understand what already exists:
    - Implementation phases and their completion status (checked-off tasks indicate completed work)
    - Existing functional and non-functional requirements
 
-3. **Review existing agent files** in `.github/agents/`:
+3. **Review existing agent files** in `.claude/plugins/agent-forge/agents/`:
    - What specialist agents exist and what are their domains?
    - What responsibilities does each agent own?
    - What collaboration patterns are established?
