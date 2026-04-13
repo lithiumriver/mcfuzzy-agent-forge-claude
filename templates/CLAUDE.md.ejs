@@ -1,0 +1,34 @@
+# <%= projectName %> — Claude Code Configuration
+
+## Agent Team
+
+This project uses a custom Claude Code agent team managed by Agent Forge.
+
+| Agent | Role |
+|---|---|
+| `project-orchestrator` | Coordinates specialist agents through PRD implementation phases |
+
+> Agent files live in `.claude/plugins/agent-forge/agents/`. Run `/forge-build-agent-team` to generate specialist agents from your PRD.
+
+## Workflow
+
+1. **Build a PRD** — `/forge-build-prd` (if not done yet)
+2. **Generate agents** — `/forge-build-agent-team`
+3. **Execute the build** — invoke `project-orchestrator` to coordinate phases
+
+For decomposed projects:
+1. `/forge-build-prd` → `/forge-decompose-prd` → `/forge-build-agent-team` → build feature by feature
+
+## Conventions
+
+- Agent names are lowercase-hyphenated (e.g., `backend-engineer`, `qa-tester`)
+- Each agent owns one domain — no overlapping responsibilities
+- Agents reference the PRD by section number, not by copying content
+- Commit after each phase completes
+
+## EJS Recording Contract (optional)
+
+If using the Engineering Journey System:
+- Record decisions and sub-agent work to the session journey file
+- Query `.ejs.db` before reading raw markdown for past context
+- Attribute every entry by agent name
