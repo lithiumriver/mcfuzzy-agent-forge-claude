@@ -150,7 +150,7 @@ mcfuzzy-agent-forge/
 No. The generated agent team in `.claude/plugins/agent-forge/` is self-contained. The forge plugin only needs to be installed where you run `/forge-build-agent-team`.
 
 **Can I use this without Claude Code?**
-This plugin is designed for Claude Code. For GitHub Copilot, use the original [v1 branch](https://github.com/McFuzzySquirrel/mcfuzzy-agent-forge/tree/v1-copilot).
+This plugin is designed for Claude Code. For GitHub Copilot, use the original [repo](https://github.com/McFuzzySquirrel/mcfuzzy-agent-forge).
 
 **How many agents does it generate?**
 3–4 agents for small projects, 8–12 for larger ones. The forge scales the team to your PRD's complexity.
