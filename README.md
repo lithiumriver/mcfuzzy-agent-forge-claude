@@ -9,6 +9,8 @@
 
 **McFuzzy Agent Forge** turns your requirements document into a coordinated team of Claude Code specialist agents. Each agent owns a specific domain, understands its dependencies, and works in sequence so nothing gets missed.
 
+> **Credits:** This is a Claude Code port of [McFuzzy Agent Forge](https://github.com/McFuzzySquirrel/mcfuzzy-agent-forge) by [@McFuzzySquirrel](https://github.com/McFuzzySquirrel). The original work — PRD interview process, agent team generation methodology, decomposition workflow, and orchestration patterns — is entirely theirs.
+
 [Getting Started](#getting-started) • [How It Works](#how-it-works) • [Usage](#usage) • [Prompt Playbook](docs/prompt-playbook.md) • [FAQ](#faq)
 
 ---
@@ -153,9 +155,5 @@ This plugin is designed for Claude Code. For GitHub Copilot, use the original [v
 **How many agents does it generate?**
 3–4 agents for small projects, 8–12 for larger ones. The forge scales the team to your PRD's complexity.
 
----
 
-## Credits
-
-This project is a Claude Code port of [McFuzzy Agent Forge](https://github.com/McFuzzySquirrel/mcfuzzy-agent-forge) by [@McFuzzySquirrel](https://github.com/McFuzzySquirrel). The original work — the PRD interview process, agent team generation methodology, decomposition workflow, and orchestration patterns — is entirely theirs. This repo adapts that foundation for the Claude Code plugin ecosystem.
 
