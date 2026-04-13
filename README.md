@@ -1,52 +1,49 @@
 # McFuzzy Agent Forge
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+![Claude Code](https://img.shields.io/badge/Claude_Code-Plugin-orange)
 ![Bash](https://img.shields.io/badge/Bash-4EAA25?logo=gnubash&logoColor=fff)
 ![PowerShell](https://img.shields.io/badge/PowerShell-5391FE?logo=powershell&logoColor=fff)
 
-> Bootstrap a custom GitHub Copilot agent team from your PRD — in minutes.
+> Bootstrap a custom Claude Code agent team from your PRD — in minutes.
 
-**McFuzzy Agent Forge** turns your requirements document into a coordinated team of GitHub Copilot specialist agents. Each agent owns a specific domain, understands its dependencies, and works in sequence so nothing gets missed.
+**McFuzzy Agent Forge** turns your requirements document into a coordinated team of Claude Code specialist agents. Each agent owns a specific domain, understands its dependencies, and works in sequence so nothing gets missed.
 
-[Getting Started](#getting-started) • [How It Works](#how-it-works) • [Usage](#usage) • [Prompt Playbook](docs/prompt-playbook.md) • [Local Models](docs/running-with-local-models.md) • [FAQ](#faq)
+[Getting Started](#getting-started) • [How It Works](#how-it-works) • [Usage](#usage) • [Prompt Playbook](docs/prompt-playbook.md) • [FAQ](#faq)
 
 ---
 
 ## How It Works
 
-Choose the approach that fits your project:
+| Approach | Best for |
+|---|---|
+| **Monolithic PRD** → agent team → build | Small-to-medium projects |
+| **PRD** → decompose into features → agent team → build feature by feature | Larger projects or incremental delivery |
 
-| | Approach | Best for |
-|---|---|---|
-| **A** | **Monolithic PRD** → agent team → build | Small-to-medium projects |
-| **B** | **PRD** → decompose into features → agent team → build feature by feature | Larger projects or incremental delivery |
-
-Both approaches use the same core toolkit:
+Both approaches use the same toolkit:
 
 | What | Role |
 |---|---|
-| `forge-build-prd` skill | Interviews you and creates a comprehensive PRD |
-| `forge-decompose-prd` skill | Splits a monolithic PRD into a Product Vision + Feature documents |
-| `forge-build-feature-prd` skill | Creates a Feature PRD to add a new feature to an existing project |
-| `forge-team-builder` agent | Reads a PRD or feature set and generates the full specialist agent team |
-| `project-orchestrator` agent | Coordinates agents through implementation phases, phase by phase |
-| Bootstrap scripts | Copy all templates into any target repository with one command |
+| `/forge-build-prd` skill | Interviews you and creates a comprehensive PRD |
+| `/forge-decompose-prd` skill | Splits a monolithic PRD into Product Vision + Feature documents |
+| `/forge-build-feature-prd` skill | Creates a Feature PRD to add a new feature to an existing project |
+| `forge-team-builder` agent | Reads a PRD or feature set and generates the specialist agent team |
+| `project-orchestrator` agent | Coordinates agents through implementation phases |
+| Bootstrap scripts | Copy plugin skeleton + CLAUDE.md into any target repository |
 
 ---
 
 ## Getting Started
 
-### Prerequisites
-
-- GitHub Copilot active in VS Code
-- Git + Bash (Linux/macOS) or PowerShell 5.1+ (Windows)
-- [Ollama](https://ollama.com/) (optional — for [local model support](docs/running-with-local-models.md))
-
-### 1. Clone Agent Forge
+### 1. Install the forge plugin
 
 ```bash
 git clone https://github.com/McFuzzySquirrel/mcfuzzy-agent-forge.git
-cd mcfuzzy-agent-forge
+```
+
+Then install in Claude Code:
+```
+/plugin install /path/to/mcfuzzy-agent-forge
 ```
 
 ### 2. Bootstrap into your project
@@ -61,51 +58,35 @@ cd mcfuzzy-agent-forge
 .\scripts\bootstrap.ps1 -Target C:\path\to\your\project
 ```
 
-This copies agent and skill templates into `.github/agents/` and `.github/skills/` in your target project. Use `--force` / `-Force` to skip overwrite prompts.
+This copies `.claude/plugins/agent-forge/` (with `project-orchestrator` pre-installed) and generates a `CLAUDE.md` in your target project.
 
 ### 3. Commit and open your project
 
 ```bash
 cd /path/to/your/project
-git add .github/
-git commit -m "chore: bootstrap Agent Forge templates"
+git add .claude/ CLAUDE.md
+git commit -m "chore: bootstrap Agent Forge"
 ```
 
-Open the project in VS Code — Copilot will auto-detect the agents immediately.
+Open the project in Claude Code.
 
 ### 4. Build your PRD
 
-In Copilot Chat:
 ```
-@workspace /forge-build-prd Create a PRD for [your idea]
+/forge-build-prd
 ```
-
-The skill interviews you for requirements and saves a complete PRD to `docs/PRD.md`.
 
 ### 5. Generate your agent team
 
 ```
-@workspace /forge-team-builder Analyze docs/PRD.md and generate the agent team
+/forge-build-agent-team
 ```
 
-Agent files appear in `.github/agents/`. Each specialist owns a clear domain with no overlaps.
+Specialist agents appear in `.claude/plugins/agent-forge/agents/`.
 
 ### 6. Execute the build
 
-```
-@workspace @project-orchestrator Analyze docs/PRD.md and produce an execution plan
-```
-
-Review the plan, then run one phase at a time:
-```
-@workspace @project-orchestrator Execute Phase 1 only. Stop and report when done.
-```
-
-> [!TIP]
-> The orchestrator writes `docs/PROGRESS.md` after each phase. Use `Resume from last checkpoint` to pick up where you left off.
-
-> [!TIP]
-> See [docs/prompt-playbook.md](docs/prompt-playbook.md) for the full copy-paste prompt sequence, including feature additions, decomposition, and resume flows.
+Invoke `project-orchestrator` to coordinate agents phase by phase.
 
 ---
 
@@ -114,165 +95,61 @@ Review the plan, then run one phase at a time:
 ### Bootstrap options
 
 ```bash
-# Interactive — prompts for target path
-./scripts/bootstrap.sh
-
-# With target path
-./scripts/bootstrap.sh ../my-project
-
-# Force overwrite without prompting
-./scripts/bootstrap.sh ../my-project --force
-```
-
-```powershell
-.\scripts\bootstrap.ps1 -Target ..\my-project -Force
+./scripts/bootstrap.sh /path/to/project          # Interactive (prompts on conflict)
+./scripts/bootstrap.sh /path/to/project --force  # Overwrite without prompting
 ```
 
 ### Add a feature to an existing project
 
-After the initial build, add features without touching unaffected agents:
-
-**1. Create a Feature PRD:**
 ```
-@workspace /forge-build-feature-prd Add a real-time notification system to the project
+/forge-build-feature-prd
 ```
 
-**2. Extend the agent team (only affected agents change):**
-```
-@workspace /forge-team-builder Analyze docs/features/notifications.md and update the team
-```
-
-**3. Execute the feature phases:**
-```
-@workspace @project-orchestrator Execute feature docs/features/notifications.md — Phase F1 only
-```
-
-> [!TIP]
-> Feature PRDs use `FT-` prefixed IDs and `F-` prefixed phases to avoid collision with the original PRD. Tracing is clean.
+Then run `/forge-build-agent-team` to extend your agent team with the new feature's specialist.
 
 ### Decompose a large PRD into features
 
 ```
-@workspace /forge-decompose-prd Break docs/PRD.md into a product vision and feature documents
+/forge-decompose-prd
 ```
 
-Produces `docs/product-vision.md` (architecture, NFRs, cross-cutting concerns) and `docs/features/*.md` (one per feature, self-contained). The team builder and orchestrator both support this layout automatically.
+Produces `docs/product-vision.md` and `docs/features/*.md`. Then run `/forge-build-agent-team` to generate the team from the decomposed documents.
 
 ---
 
-## Running with Local Models (BYOK)
-
-Copilot CLI supports any OpenAI-compatible endpoint. Point it at [Ollama](https://ollama.com/) to run fully local with no cloud dependency.
-
-See the full guide — recommended models, GPU setup, reliability benchmarking, and overheating prevention:
-**[docs/running-with-local-models.md](docs/running-with-local-models.md)**
-
----
-
-## Persistent Memory with EJS
-
-The [Engineering Journey System (EJS)](https://github.com/McFuzzySquirrel/Engineering-Journey-System) adds session memory to your agent team. Without it, agents start fresh every conversation with no awareness of past decisions. With it, they query a local SQLite database of past ADRs, learnings, and architectural choices.
-
-EJS is optional but recommended. Bootstrap it before Agent Forge for a new project, then add the EJS recording contract to `.github/copilot-instructions.md`:
-
-```markdown
-## EJS Recording Contract
-- Record decisions and sub-agent work to the session journey file
-- Query `.ejs.db` before reading raw markdown for past context
-- Attribute every entry by agent name
-```
-
-> [!TIP]
-> With EJS + Agent Forge + BYOK, you get a fully local, context-aware agent team that remembers past decisions — no cloud dependency required.
-
----
-
-## Template Structure
+## Plugin Structure
 
 ```
 mcfuzzy-agent-forge/
+├── plugin.json                          # Claude Code plugin manifest
+├── skills/
+│   ├── forge-build-prd/SKILL.md
+│   ├── forge-decompose-prd/SKILL.md
+│   ├── forge-build-feature-prd/SKILL.md
+│   └── forge-build-agent-team/SKILL.md
+├── agents/
+│   ├── forge-team-builder.md
+│   └── project-orchestrator.md
 ├── templates/
-│   ├── agents/
-│   │   ├── project-orchestrator.md     # Coordinates agents through PRD phases or features
-│   │   └── forge-team-builder.md       # PRD → agent team generator
-│   └── skills/
-│       ├── forge-build-agent-team/SKILL.md   # Process for building agent teams
-│       ├── forge-build-feature-prd/SKILL.md  # Process for building Feature PRDs
-│       ├── forge-build-prd/SKILL.md          # Process for building PRDs
-│       └── forge-decompose-prd/SKILL.md      # Process for decomposing PRDs into features
-├── scripts/
-│   ├── bootstrap.sh                    # Bash bootstrap script
-│   └── bootstrap.ps1                   # PowerShell bootstrap script
-└── docs/
-    ├── prompt-playbook.md              # Full copy-paste prompt sequence
-    └── running-with-local-models.md    # BYOK / Ollama setup guide
+│   ├── plugin.json.ejs                  # Generated plugin manifest template
+│   ├── CLAUDE.md.ejs                    # Generated CLAUDE.md template
+│   └── agents/
+│       └── project-orchestrator.md     # Bootstrapped into target projects
+└── scripts/
+    ├── bootstrap.sh
+    └── bootstrap.ps1
 ```
-
-Agents use YAML frontmatter followed by a plain Markdown body. Skills follow the same format with a `SKILL.md` filename convention. Copilot auto-detects both.
-
----
-
-## Troubleshooting
-
-**Bootstrap script: permission denied**
-```bash
-chmod +x scripts/bootstrap.sh
-```
-
-**Agents not appearing in Copilot**
-- Files must be committed (not just saved)
-- Paths: `.github/agents/*.md` and `.github/skills/*/SKILL.md`
-- YAML frontmatter must be valid
-- Agent `name:` must match the filename (e.g., `my-agent.md` → `name: my-agent`)
-
-**Team builder creates too many or too few agents**
-Team size is driven by the PRD. More distinct functional domains → more agents. Tighten or broaden the PRD scope and re-run.
-
-**Agents have overlapping responsibilities**
-Overlaps mean PRD boundaries are unclear. Clarify which files/components belong to which domain, then re-run the team builder.
 
 ---
 
 ## FAQ
 
-**Do I need to use all the templates?**
-No — use only what you need, or treat them as examples.
+**Do I need the forge plugin installed in the target project?**
+No. The generated agent team in `.claude/plugins/agent-forge/` is self-contained. The forge plugin only needs to be installed where you run `/forge-build-agent-team`.
 
-**Can I use this without a PRD?**
-Yes. Bootstrap the templates and write agent files manually following the format.
+**Can I use this without Claude Code?**
+This plugin is designed for Claude Code. For GitHub Copilot, use the original [v1 branch](https://github.com/McFuzzySquirrel/mcfuzzy-agent-forge/tree/v1-copilot).
 
-**My project already has custom agents. Will bootstrap overwrite them?**
-It prompts before overwriting. Use `--force` only if you want to replace everything.
-
-**Does this work for non-web projects?**
-Yes — CLI tools, mobile apps, embedded systems, data pipelines. The team builder adapts to whatever stack your PRD describes.
-
-**When should I decompose my PRD into features?**
-When your PRD has 15+ functional requirements or 3+ phases, or when you want to prioritize and ship features independently.
-
-**Can I resume work across sessions or machines?**
-Yes. The orchestrator writes `docs/PROGRESS.md` after each phase. Use `@project-orchestrator Resume from last checkpoint` on any machine with the repo cloned.
-
-**How do I update agents when my PRD changes?**
-Re-run `@workspace /forge-team-builder` for minor changes. For new features on a completed project, use `forge-build-feature-prd` first, then run the team builder in Feature Increment Mode.
-
----
-
-## Resources
-
-- [Prompt Playbook](docs/prompt-playbook.md) — Full copy-paste prompt sequence for every workflow
-- [Running with Local Models](docs/running-with-local-models.md) — BYOK / Ollama setup and model recommendations
-- [GitHub Copilot Custom Agents Documentation](https://docs.github.com/en/copilot/customizing-copilot/creating-custom-agents)
-- [GitHub Copilot Skills Documentation](https://docs.github.com/en/copilot/customizing-copilot/creating-copilot-skills)
-
----
-
-## Support
-
-1. Check [Troubleshooting](#troubleshooting) and [FAQ](#faq)
-2. [Open an issue](https://github.com/McFuzzySquirrel/mcfuzzy-agent-forge/issues) on GitHub
-
----
-
-**Made with ❤️ by [McFuzzySquirrel](https://github.com/McFuzzySquirrel)**
+**How many agents does it generate?**
+3–4 agents for small projects, 8–12 for larger ones. The forge scales the team to your PRD's complexity.
 
