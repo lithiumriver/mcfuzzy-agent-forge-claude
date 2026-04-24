@@ -10,6 +10,7 @@
 #
 # What it does:
 #   Copies templates/agents/project-orchestrator.md → TARGET_DIR/.claude/plugins/agent-forge/agents/
+#   Copies skills/**/SKILL.md → TARGET_DIR/.claude/plugins/agent-forge/skills/
 #   Renders templates/plugin.json.ejs  → TARGET_DIR/.claude/plugins/agent-forge/plugin.json
 #   Renders templates/CLAUDE.md.ejs    → TARGET_DIR/CLAUDE.md
 
@@ -79,6 +80,17 @@ mkdir -p "$AGENTS_DIR" "$SKILLS_DIR"
 # Copy project-orchestrator agent
 copy_file "$TEMPLATES_DIR/agents/project-orchestrator.md" "$AGENTS_DIR/project-orchestrator.md"
 
+# Copy skills
+echo "Copying skills..."
+SOURCE_SKILLS_DIR="$(cd "$SCRIPT_DIR/../skills" && pwd)"
+for skill_dir in "$SOURCE_SKILLS_DIR"/*; do
+  if [[ -d "$skill_dir" ]]; then
+    skill_name="$(basename "$skill_dir")"
+    skill_dest="$SKILLS_DIR/$skill_name/SKILL.md"
+    copy_file "$skill_dir/SKILL.md" "$skill_dest"
+  fi
+done
+
 # Render plugin.json
 PROJECT_NAME="$(basename "$TARGET_DIR")"
 if command -v node &>/dev/null && node -e "require('ejs')" 2>/dev/null; then
@@ -96,7 +108,12 @@ else
   "version": "1.0.0",
   "description": "Custom Claude Code agent team for $PROJECT_NAME",
   "agents": ["agents/project-orchestrator.md"],
-  "skills": []
+  "skills": [
+    "skills/forge-build-prd",
+    "skills/forge-decompose-prd",
+    "skills/forge-build-feature-prd",
+    "skills/forge-build-agent-team"
+  ]
 }
 PLUGINJSON
   echo "  Wrote plugin.json (static fallback)"
